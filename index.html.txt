@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Allyoung 實體物流 SOP 題庫系統</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts Inter & Noto Sans TC -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            allyoung: {
+              50: '#FFF5F7',
+              100: '#FFE6EC',
+              200: '#FFCCD8',
+              300: '#FF99B3',
+              400: '#FF668E',
+              500: '#FF3368',
+              600: '#E61A50',
+              700: '#B30B37',
+              bg: '#FFF0F3',
+              card: '#FFFFFF',
+              darkText: '#2D3748',
+              accent: '#E056FD'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #FAF2F4;
+      color: #2D3748;
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #FFE6EC;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #FF99B3;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #FF668E;
+    }
+    .glass-header {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 204, 216, 0.5);
+    }
+    .shadow-soft {
+      box-shadow: 0 10px 25px -5px rgba(255, 102, 142, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+    }
+    .pulse-subtle {
+      animation: pulseSubtle 2s infinite;
+    }
+    @keyframes pulseSubtle {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-allyoung-200 selection:text-allyoung-700">
+
+  <!-- APP CONTAINER -->
+  <div id="app" class="flex-grow flex flex-col">
+    
+    <!-- TOP HEADER -->
+    <header class="sticky top-0 z-40 glass-header px-4 lg:px-8 py-3 transition-all duration-300">
+      <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+        <!-- Logo & Title -->
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('quiz')">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-allyoung-400 to-allyoung-300 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-allyoung-300/50">
+            A
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-black tracking-wider text-xl bg-gradient-to-r from-allyoung-600 via-allyoung-500 to-purple-600 bg-clip-text text-transparent">allyoung</span>
+              <span class="text-xs bg-allyoung-100 text-allyoung-700 px-2 py-0.5 rounded-full font-medium">實體物流 SOP</span>
+            </div>
+            <p class="text-xs text-gray-500">出貨與退貨作業規範訓練系統</p>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="flex items-center gap-1 bg-allyoung-100/70 p-1.5 rounded-2xl w-full md:w-auto overflow-x-auto text-xs sm:text-sm font-medium">
+          <button onclick="switchTab('quiz')" id="nav-quiz" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 whitespace-nowrap bg-white text-allyoung-600 shadow-sm font-semibold">
+            <i class="fa-solid fa-graduation-cap"></i> 測驗練習
+          </button>
+          <button onclick="switchTab('sop')" id="nav-sop" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 whitespace-nowrap text-gray-600 hover:text-allyoung-600">
+            <i class="fa-solid fa-book-open"></i> SOP 查閱
+          </button>
+          <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 whitespace-nowrap text-gray-600 hover:text-allyoung-600">
+            <i class="fa-solid fa-chart-line"></i> 紀錄與錯題
+          </button>
+          <button onclick="switchTab('admin')" id="nav-admin" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 whitespace-nowrap text-gray-600 hover:text-allyoung-600">
+            <i class="fa-solid fa-sliders"></i> 題庫管理
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT BODY -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 lg:p-8">
+      
+      <!-- ==================== TAB 1: QUIZ PRACTICE ==================== -->
+      <section id="tab-quiz" class="space-y-6">
+        
+        <!-- QUIZ SETUP / FILTER PANEL -->
+        <div id="quiz-setup-panel" class="bg-white rounded-3xl p-6 md:p-8 shadow-soft border border-allyoung-100 relative overflow-hidden">
+          <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-allyoung-100/50 rounded-full blur-2xl pointer-events-none"></div>
+          
+          <div class="max-w-3xl">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-allyoung-100 text-allyoung-600 mb-3">
+              <i class="fa-solid fa-bolt"></i> 智慧物流實務練習
+            </span>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">請選擇測驗條件並開始練習</h1>
+            <p class="text-gray-500 text-sm mb-6">題目涵蓋屈臣氏、康是美、寶雅、百貨、零零特賣、家樂福與退貨流程規範。</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <!-- Category Filter -->
+              <div>
+                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">主類別</label>
+                <select id="quiz-filter-cat" class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-allyoung-400 font-medium">
+                  <option value="ALL">全部類別 (出貨 + 退貨)</option>
+                  <option value="出貨">【出貨】作業規範</option>
+                  <option value="退貨">【退貨】流程規範</option>
+                  <option value="綜合">【綜合】知識題</option>
+                </select>
+              </div>
+
+              <!-- Channel Filter -->
+              <div>
+                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">指定通路 / 主題</label>
+                <select id="quiz-filter-channel" class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-allyoung-400 font-medium">
+                  <option value="ALL">所有通路</option>
+                  <option value="屈臣氏">屈臣氏</option>
+                  <option value="康是美">康是美</option>
+                  <option value="寶雅">寶雅</option>
+                  <option value="百貨">百貨門市</option>
+                  <option value="零零特賣">零零特賣</option>
+                  <option value="家樂福電商">家樂福電商</option>
+                  <option value="氣氛物與試用品">氣氛物 / 試用品</option>
+                </select>
+              </div>
+
+              <!-- Quiz Mode Filter -->
+              <div>
+                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">練習模式</label>
+                <select id="quiz-filter-mode" class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-allyoung-400 font-medium">
+                  <option value="instant">即時解說模式 (答題即知對錯)</option>
+                  <option value="exam">模擬考試模式 (限時且最後結算)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-gray-100">
+              <span id="quiz-available-count" class="text-xs text-gray-500 font-medium">可練習題目數：載入中...</span>
+              <button onclick="startQuiz()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-allyoung-500 to-allyoung-400 text-white font-bold text-sm shadow-md shadow-allyoung-300/60 hover:shadow-lg hover:brightness-105 active:scale-95 transition-all duration-200 flex items-center gap-2">
+                <i class="fa-solid fa-play"></i> 開始測驗
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTIVE QUIZ CONTAINER (Hidden initially) -->
+        <div id="quiz-active-container" class="hidden space-y-6">
+          
+          <!-- Quiz Top Stats / Progress bar -->
+          <div class="bg-white rounded-2xl p-4 shadow-soft border border-allyoung-100 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <span id="quiz-progress-text" class="text-sm font-bold text-allyoung-600 bg-allyoung-50 px-3 py-1.5 rounded-lg border border-allyoung-200">
+                第 1 / 10 題
+              </span>
+              <span id="quiz-mode-badge" class="text-xs px-2.5 py-1 rounded-md bg-gray-100 text-gray-600 font-semibold">
+                即時解說模式
+              </span>
+            </div>
+
+            <!-- Timer (visible in exam mode) -->
+            <div id="quiz-timer-box" class="hidden flex items-center gap-2 text-sm font-bold text-red-500 bg-red-50 px-3 py-1.5 rounded-lg border border-red-200">
+              <i class="fa-regular fa-clock"></i> 剩餘時間: <span id="quiz-timer">15:00</span>
+            </div>
+
+            <button onclick="abortQuiz()" class="text-xs text-gray-400 hover:text-red-500 transition-colors">
+              <i class="fa-solid fa-xmark"></i> 中途退出
+            </button>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+            <div id="quiz-progress-bar" class="bg-gradient-to-r from-allyoung-400 to-allyoung-500 h-2 rounded-full transition-all duration-300" style="width: 10%;"></div>
+          </div>
+
+          <!-- Question Card -->
+          <div class="bg-white rounded-3xl p-6 md:p-8 shadow-soft border border-allyoung-100 space-y-6">
+            
+            <div class="flex items-start justify-between gap-4">
+              <div class="space-y-2">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span id="q-category-tag" class="text-xs px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-700 font-medium">出貨</span>
+                  <span id="q-channel-tag" class="text-xs px-2.5 py-0.5 rounded-full bg-pink-100 text-pink-700 font-medium">屈臣氏</span>
+                </div>
+                <h2 id="q-text" class="text-lg md:text-xl font-bold text-gray-800 leading-snug">
+                  載入題目中...
+                </h2>
+              </div>
+            </div>
+
+            <!-- Options List -->
+            <div id="q-options" class="grid grid-cols-1 gap-3 pt-2">
+              <!-- Options injected dynamically -->
+            </div>
+
+            <!-- Instant Feedback Explanation Box (hidden in exam mode or before answering) -->
+            <div id="q-explanation-box" class="hidden rounded-2xl p-4 md:p-5 text-sm transition-all duration-200">
+              <div class="flex items-center gap-2 font-bold mb-1" id="q-result-title">
+                <i class="fa-solid fa-circle-info"></i> SOP 解析與標準做法
+              </div>
+              <p id="q-explanation-text" class="text-gray-700 leading-relaxed font-normal">
+                --
+              </p>
+            </div>
+
+            <!-- Question Footer Buttons -->
+            <div class="flex justify-end pt-4 border-t border-gray-100">
+              <button id="btn-next-q" onclick="nextQuestion()" disabled class="px-6 py-2.5 rounded-xl bg-allyoung-500 text-white font-bold text-sm shadow-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-allyoung-600 transition-all">
+                下一題 <i class="fa-solid fa-arrow-right ml-1"></i>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- QUIZ RESULT SUMMARY (Hidden initially) -->
+        <div id="quiz-result-panel" class="hidden bg-white rounded-3xl p-6 md:p-8 shadow-soft border border-allyoung-100 text-center space-y-6">
+          <div class="max-w-xl mx-auto space-y-4">
+            <div class="w-20 h-20 mx-auto rounded-full bg-allyoung-100 flex items-center justify-center text-allyoung-500 text-3xl shadow-inner">
+              <i class="fa-solid fa-trophy"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800">測驗完成！</h2>
+            <p class="text-sm text-gray-500">感謝您的答題，以下為本次測驗結果摘要：</p>
+
+            <div class="grid grid-cols-3 gap-3 py-4 bg-allyoung-50/50 rounded-2xl border border-allyoung-100">
+              <div>
+                <span class="block text-xs text-gray-400 mb-1">得分</span>
+                <span id="res-score" class="text-2xl font-black text-allyoung-600">80</span>
+                <span class="text-xs text-gray-500">分</span>
+              </div>
+              <div>
+                <span class="block text-xs text-gray-400 mb-1">對 / 錯</span>
+                <span id="res-correct-wrong" class="text-2xl font-black text-gray-800">8 / 2</span>
+              </div>
+              <div>
+                <span class="block text-xs text-gray-400 mb-1">正確率</span>
+                <span id="res-accuracy" class="text-2xl font-black text-green-600">80%</span>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-3 pt-2">
+              <button onclick="startQuiz()" class="px-5 py-2.5 rounded-xl bg-allyoung-500 text-white font-bold text-sm shadow-md hover:bg-allyoung-600 transition-all">
+                <i class="fa-solid fa-rotate-right mr-1"></i> 再次練習
+              </button>
+              <button onclick="switchTab('analytics')" class="px-5 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-bold text-sm hover:bg-gray-200 transition-all">
+                <i class="fa-solid fa-clipboard-list mr-1"></i> 檢視錯題與紀錄
+              </button>
+            </div>
+          </div>
+
+          <!-- Wrong Question Breakdown -->
+          <div id="res-wrong-details" class="text-left mt-8 pt-6 border-t border-gray-100 space-y-4">
+            <h3 class="font-bold text-gray-800 text-base flex items-center gap-2">
+              <i class="fa-solid fa-triangle-exclamation text-amber-500"></i> 本次錯題檢討
+            </h3>
+            <div id="res-wrong-list" class="space-y-3">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ==================== TAB 2: SOP QUICK REFERENCE ==================== -->
+      <section id="tab-sop" class="hidden space-y-6">
+        <div class="bg-white rounded-3xl p-6 md:p-8 shadow-soft border border-allyoung-100">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div>
+              <h2 class="text-xl md:text-2xl font-bold text-gray-800 flex items-center gap-2">
+                <i class="fa-solid fa-book-bookmark text-allyoung-500"></i> 實體 SOP 知識庫速查
+              </h2>
+              <p class="text-xs md:text-sm text-gray-500">整合屈臣氏、康是美、寶雅、百貨、零零特賣、家樂福與退貨關鍵規則</p>
+            </div>
+            <!-- Search Bar -->
+            <div class="relative w-full md:w-72">
+              <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+              <input type="text" id="sop-search-input" onkeyup="filterSopAccordion()" placeholder="搜尋 SOP 關鍵字 (例：麥頭, 棧板, W6002)..." class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-9 pr-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-allyoung-400">
+            </div>
+          </div>
+
+          <!-- Accordion List -->
+          <div class="space-y-3" id="sop-accordion-container">
+            
+            <!-- Watsons -->
+            <div class="sop-card border border-gray-200 rounded-2xl overflow-hidden transition-all duration-200">
+              <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-allyoung-50/50 text-left font-bold text-gray-800 text-sm md:text-base">
+                <span class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span>
+                  【出貨】屈臣氏 (Watsons) 作業重點
+                </span>
+                <i class="fa-solid fa-chevron-down text-xs text-gray-400 transition-transform"></i>
+              </button>
+              <div class="hidden p-4 md:p-5 text-xs md:text-sm space-y-2 border-t border-gray-100 bg-white text-gray-700 leading-relaxed">
+                <p><strong>1. 允收效期：</strong> 商品效期須 <strong>> 2 年</strong>，否則無法出貨。</p>
+                <p><strong>2. 棧板規範：</strong> 尺寸 <strong>100*120 cm</strong>、四向進叉、木質棧板。</p>
+                <p><strong>3. 麥頭位置：</strong> A5 麥頭需貼於箱側 <strong>左上角</strong>。</p>
+                <p><strong>4. 批號控制：</strong> 同張訂單同商品僅能有 <strong>1 種批號尾數箱</strong>；雙批號箱須用 <strong>紅蠟筆</strong> 顯著標記。</p>
+                <p><strong>5. 滿板門檻：</strong> 大榮貨運 <strong>滿 20 大件</strong> 即需打成板出貨。</p>
+              </div>
+            </div>
+
+            <!-- Cosmed -->
+            <div class="sop-card border border-gray-200 rounded-2xl overflow-hidden transition-all duration-200">
+              <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-allyoung-50/50 text-left font-bold text-gray-800 text-sm md:text-base">
+                <span class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span>
+                  【出貨】康是美 (Cosmed) 作業重點
+                </span>
+                <i class="fa-solid fa-chevron-down text-xs text-gray-400 transition-transform"></i>
+              </button>
+              <div class="hidden p-4 md:p-5 text-xs md:text-sm space-y-2 border-t border-gray-100 bg-white text-gray-700 leading-relaxed">
+                <p><strong>1. 出貨原則：</strong> 絕對不可往回出貨。</p>
+                <p><strong>2. 麥頭規範：</strong> 貼於箱側 <strong>左上角</strong>。</p>
+                <p><strong>3. 單據附夾：</strong></p>
+                <ul class="list-disc pl-5 space-y-1">
+                  <li><strong>箱內：</strong> 8號袋 2折（放入歐漾銷貨單 + 康是美訂單）。</li>
+                  <li><strong>箱外：</strong> 6號袋 4折（放入康是美訂單）。</li>
+                  <li><strong>禁忌：</strong> 箱外絕對不能有任何其他標籤或塗改痕跡。</li>
+                </ul>
+                <p><strong>4. 滿板門檻：</strong> 新竹貨運 <strong>滿 15 大件</strong> 即需成板。</p>
+              </div>
+            </div>
+
+            <!-- Poya -->
+            <div class="sop-card border border-gray-200 rounded-2xl overflow-hidden transition-all duration-200">
+              <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-allyoung-50/50 text-left font-bold text-gray-800 text-sm md:text-base">
+                <span class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-pink-500"></span>
+                  【出貨】寶雅 (Poya) 作業重點
+                </span>
+                <i class="fa-solid fa-chevron-down text-xs text-gray-400 transition-transform"></i>
+              </button>
+              <div class="hidden p-4 md:p-5 text-xs md:text-sm space-y-2 border-t border-gray-100 bg-white text-gray-700 leading-relaxed">
+                <p><strong>1. 到倉允許：</strong> 寶雅允許可提前到倉。</p>
+                <p><strong>2. 紅蠟筆標示：</strong> 箱內與箱外各一張訂單，且均需用 <strong>紅蠟筆</strong> 顯著圈標。</p>
+                <p><strong>3. 缺補貨註記：</strong> 缺貨填寫 0 並備註「分批出貨」；補出貨時備註「本次出貨」。</p>
+              </div>
+            </div>
+
+            <!-- Dept Store -->
+            <div class="sop-card border border-gray-200 rounded-2xl overflow-hidden transition-all duration-200">
+              <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-allyoung-50/50 text-left font-bold text-gray-800 text-sm md:text-base">
+                <span class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                  【出貨】百貨門市作業重點
+                </span>
+                <i class="fa-solid fa-chevron-down text-xs text-gray-400 transition-transform"></i>
+              </button>
+              <div class="hidden p-4 md:p-5 text-xs md:text-sm space-y-2 border-t border-gray-100 bg-white text-gray-700 leading-relaxed">
+                <p><strong>1. 單據對點：</strong> 持「歐漾借出單」逐一對點核對。</p>
+                <p><strong>2. 群組回報：</strong> 託運單開立後需拍照上傳至「實體群組」。</p>
+                <p><strong>3. 棧板選用：</strong> 打板時優先使用 <strong>塑膠板 / 甘蔗板</strong>。</p>
+              </div>
+            </div>
+
+            <!-- 00 Sales -->
+            <div class="sop-card border border-gray-200 rounded-2xl overflow-hidden transition-all duration-200">
+              <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-allyoung-50/50 text-left font-bold text-gray-800 text-sm md:text-base">
+                <span class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+                  【出貨】零零特賣作業重點
+                </span>
+                <i class="fa-solid fa-chevron-down text-xs text-gray-400 transition-transform"></i>
+              </button>
+              <div class="hidden p-4 md:p-5 text-xs md:text-sm space-y-2 border-t border-gray-100 bg-white text-gray-700 leading-relaxed">
+                <p><strong>1. 優先效期：</strong> 優先出貨 <strong>即期品 (撤場+2個月)</strong> 與重整品。</p>
+                <p><strong>2. 流程與回報：</strong> 持借出單對點，託運單開立後拍照上傳至「實體群組」。</p>
+              </div>
+            </div>
+
+            <!-- Carrefour E-commerce -->
+            <div class="sop-card border border-gray-200 rounded-2xl overflow-hidden transition-all duration-200">
+              <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-allyoung-50/50 text-left font-bold text-gray-800 text-sm md:text-base">
+                <span class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+                  【出貨】家樂福電商作業重點
+                </span>
+                <i class="fa-solid fa-chevron-down text-xs text-gray-400 transition-transform"></i>
+              </button>
+              <div class="hidden p-4 md:p-5 text-xs md:text-sm space-y-2 border-t border-gray-100 bg-white text-gray-700 leading-relaxed">
+                <p><strong>1. 單據規格：</strong> 銷貨單號格式為 <strong>2323-XXXXXXXXXX</strong>，需列印 2 張。</p>
+                <p><strong>2. 包裝與秤重：</strong> 包裝完畢後必須實施秤重（含外箱包材），列印黑貓託運單並拍照上傳群組。</p>
+              </div>
+            </div>
+
+            <!-- Samples / Promotions -->
+            <div class="sop-card border border-gray-200 rounded-2xl overflow-hidden transition-all duration-200">
+              <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-allyoung-50/50 text-left font-bold text-gray-800 text-sm md:text-base">
+                <span class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                  【出貨】門市氣氛物 / 試用品作業重點
+                </span>
+                <i class="fa-solid fa-chevron-down text-xs text-gray-400 transition-transform"></i>
+              </button>
+              <div class="hidden p-4 md:p-5 text-xs md:text-sm space-y-2 border-t border-gray-100 bg-white text-gray-700 leading-relaxed">
+                <p><strong>1. 轉品號規範：</strong> 試用品必須貼上仿單轉品號。</p>
+                <p><strong>2. 箱外標記：</strong> 外箱顯著位置黏貼或書寫「<strong>薇佳氣氛物 / 試用品</strong>」。</p>
+              </div>
+            </div>
+
+            <!-- Returns Workflow -->
+            <div class="sop-card border border-gray-200 rounded-2xl overflow-hidden transition-all duration-200">
+              <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-allyoung-50/50 text-left font-bold text-gray-800 text-sm md:text-base">
+                <span class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                  【退貨】退貨與歸還作業規範
+                </span>
+                <i class="fa-solid fa-chevron-down text-xs text-gray-400 transition-transform"></i>
+              </button>
+              <div class="hidden p-4 md:p-5 text-xs md:text-sm space-y-2 border-t border-gray-100 bg-white text-gray-700 leading-relaxed">
+                <p><strong>1. 寶雅 / 康是美暫退倉：</strong></p>
+                <ul class="list-disc pl-5 space-y-1">
+                  <li>寶雅暫退倉代碼：<strong>W6002</strong></li>
+                  <li>康是美暫退倉代碼：<strong>W6004</strong></li>
+                  <li>須系統登打「轉播單」，列印對點無誤後送出。</li>
+                </ul>
+                <p class="pt-2"><strong>2. 屈臣氏 / 零零 / 百貨 / 小三美日退貨：</strong></p>
+                <ul class="list-disc pl-5 space-y-1">
+                  <li>到貨時點收件數需與託運單記載完全一致。</li>
+                  <li>交給業務開立「<strong>歐漾歸還單</strong>」進行實體對點入庫。</li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==================== TAB 3: ANALYTICS & MISTAKES ==================== -->
+      <section id="tab-analytics" class="hidden space-y-6">
+        
+        <!-- Summary Dashboard -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-white rounded-2xl p-5 shadow-soft border border-allyoung-100 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-allyoung-100 text-allyoung-600 flex items-center justify-center text-xl">
+              <i class="fa-solid fa-bullseye"></i>
+            </div>
+            <div>
+              <span class="text-xs text-gray-400 block font-medium">總測驗次數</span>
+              <span id="stat-total-tests" class="text-2xl font-bold text-gray-800">0</span>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 shadow-soft border border-allyoung-100 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-green-100 text-green-600 flex items-center justify-center text-xl">
+              <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <div>
+              <span class="text-xs text-gray-400 block font-medium">平均正確率</span>
+              <span id="stat-avg-accuracy" class="text-2xl font-bold text-gray-800">0%</span>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 shadow-soft border border-allyoung-100 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-xl">
+              <i class="fa-solid fa-bug"></i>
+            </div>
+            <div>
+              <span class="text-xs text-gray-400 block font-medium">待複習錯題數</span>
+              <span id="stat-wrong-count" class="text-2xl font-bold text-gray-800">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wrong Questions Notebook -->
+        <div class="bg-white rounded-3xl p-6 md:p-8 shadow-soft border border-allyoung-100 space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg md:text-xl font-bold text-gray-800 flex items-center gap-2">
+              <i class="fa-solid fa-bookmark text-allyoung-500"></i> 錯題本 ( Mistake Notes )
+            </h2>
+            <button onclick="clearMistakes()" class="text-xs text-red-500 hover:text-red-700 font-medium">
+              <i class="fa-solid fa-trash-can mr-1"></i> 清空錯題紀錄
+            </button>
+          </div>
+
+          <p class="text-xs text-gray-500">系統自動收集您在練習中答錯的題目，提供精準重點複習。</p>
+
+          <div id="mistakes-container" class="space-y-3 pt-2">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Quiz History Log -->
+        <div class="bg-white rounded-3xl p-6 md:p-8 shadow-soft border border-allyoung-100 space-y-4">
+          <h2 class="text-lg md:text-xl font-bold text-gray-800 flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left text-allyoung-500"></i> 歷次測驗紀錄
+          </h2>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs md:text-sm">
+              <thead>
+                <tr class="border-b border-gray-200 text-gray-400 uppercase tracking-wider">
+                  <th class="pb-3 font-semibold">時間</th>
+                  <th class="pb-3 font-semibold">類別 / 通路</th>
+                  <th class="pb-3 font-semibold">模式</th>
+                  <th class="pb-3 font-semibold">得分</th>
+                  <th class="pb-3 font-semibold">正確率</th>
+                </tr>
+              </thead>
+              <tbody id="history-table-body" class="divide-y divide-gray-100 text-gray-700">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- ==================== TAB 4: ADMIN / QUESTION MANAGER ==================== -->
+      <section id="tab-admin" class="hidden space-y-6">
+        
+        <!-- Admin Header Actions -->
+        <div class="bg-white rounded-3xl p-6 md:p-8 shadow-soft border border-allyoung-100 space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-allyoung-500"></i> 題庫管理與後台設定
+              </h2>
+              <p class="text-xs text-gray-500">可自由新增、修改、刪除題目，或進行備份匯入匯出</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button onclick="openQuestionModal()" class="px-4 py-2 rounded-xl bg-allyoung-500 text-white font-bold text-xs shadow-md hover:bg-allyoung-600 transition-all flex items-center gap-1.5">
+                <i class="fa-solid fa-plus"></i> 新增題目
+              </button>
+              <button onclick="exportQuestionsJSON()" class="px-3 py-2 rounded-xl bg-gray-100 text-gray-700 font-medium text-xs hover:bg-gray-200 transition-all flex items-center gap-1">
+                <i class="fa-solid fa-download"></i> 匯出 JSON
+              </button>
+              <label class="px-3 py-2 rounded-xl bg-gray-100 text-gray-700 font-medium text-xs hover:bg-gray-200 cursor-pointer transition-all flex items-center gap-1">
+                <i class="fa-solid fa-upload"></i> 匯入 JSON
+                <input type="file" id="import-json-file" accept=".json" onchange="importQuestionsJSON(event)" class="hidden">
+              </label>
+              <button onclick="resetDefaultQuestions()" class="px-3 py-2 rounded-xl bg-red-50 text-red-600 font-medium text-xs hover:bg-red-100 transition-all flex items-center gap-1">
+                <i class="fa-solid fa-rotate-left"></i> 重置預設題庫
+              </button>
+            </div>
+          </div>
+
+          <!-- Questions Table / List -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between text-xs text-gray-500 pb-2 border-b border-gray-100">
+              <span id="admin-total-count">共 0 題</span>
+              <span>點擊題目進行快速編輯</span>
+            </div>
+
+            <div id="admin-questions-list" class="space-y-3 max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="mt-auto border-t border-allyoung-200/60 bg-white/60 py-4 text-center text-xs text-gray-400">
+      Allyoung Logistics Training System &copy; 2026. 內部實體 SOP 訓練專用網頁應用程式.
+    </footer>
+
+  </div>
+
+
+  <!-- ==================== MODAL: ADD / EDIT QUESTION ==================== -->
+  <div id="question-modal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl space-y-5 custom-scrollbar">
+      
+      <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+        <h3 id="modal-title" class="text-lg font-bold text-gray-800">新增 SOP 題目</h3>
+        <button onclick="closeQuestionModal()" class="text-gray-400 hover:text-gray-600 text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="question-form" onsubmit="saveQuestionForm(event)" class="space-y-4 text-xs md:text-sm">
+        <input type="hidden" id="edit-q-id">
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-gray-700 mb-1">主類別</label>
+            <select id="form-q-category" required class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-allyoung-400">
+              <option value="出貨">出貨</option>
+              <option value="退貨">退貨</option>
+              <option value="綜合">綜合</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-gray-700 mb-1">通路 / 主題</label>
+            <input type="text" id="form-q-channel" required placeholder="例如：屈臣氏, 康是美, 寶雅" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-allyoung-400">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-gray-700 mb-1">題目內容</label>
+          <textarea id="form-q-text" rows="3" required placeholder="請輸入題目敘述..." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-allyoung-400"></textarea>
+        </div>
+
+        <div class="space-y-2">
+          <label class="block font-bold text-gray-700">選項內容 (選填與選擇正確答案)</label>
+          
+          <div class="flex items-center gap-2">
+            <input type="radio" name="correct-opt" value="0" id="opt-radio-0" checked class="accent-allyoung-500">
+            <span class="font-bold text-gray-500 w-6">A.</span>
+            <input type="text" id="form-opt-0" required placeholder="選項 A 內容" class="flex-grow bg-gray-50 border border-gray-200 rounded-xl p-2 focus:outline-none focus:ring-2 focus:ring-allyoung-400">
+          </div>
+
+          <div class="flex items-center gap-2">
+            <input type="radio" name="correct-opt" value="1" id="opt-radio-1" class="accent-allyoung-500">
+            <span class="font-bold text-gray-500 w-6">B.</span>
+            <input type="text" id="form-opt-1" required placeholder="選項 B 內容" class="flex-grow bg-gray-50 border border-gray-200 rounded-xl p-2 focus:outline-none focus:ring-2 focus:ring-allyoung-400">
+          </div>
+
+          <div class="flex items-center gap-2">
+            <input type="radio" name="correct-opt" value="2" id="opt-radio-2" class="accent-allyoung-500">
+            <span class="font-bold text-gray-500 w-6">C.</span>
+            <input type="text" id="form-opt-2" required placeholder="選項 C 內容" class="flex-grow bg-gray-50 border border-gray-200 rounded-xl p-2 focus:outline-none focus:ring-2 focus:ring-allyoung-400">
+          </div>
+
+          <div class="flex items-center gap-2">
+            <input type="radio" name="correct-opt" value="3" id="opt-radio-3" class="accent-allyoung-500">
+            <span class="font-bold text-gray-500 w-6">D.</span>
+            <input type="text" id="form-opt-3" required placeholder="選項 D 內容" class="flex-grow bg-gray-50 border border-gray-200 rounded-xl p-2 focus:outline-none focus:ring-2 focus:ring-allyoung-400">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-gray-700 mb-1">SOP 答案解析與出處</label>
+          <textarea id="form-q-explanation" rows="2" required placeholder="詳細說明依據之 SOP 條款與標準做法..." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-allyoung-400"></textarea>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-3 border-t border-gray-100">
+          <button type="button" onclick="closeQuestionModal()" class="px-4 py-2 rounded-xl bg-gray-100 text-gray-600 font-bold hover:bg-gray-200 transition-all">
+            取消
+          </button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-allyoung-500 text-white font-bold hover:bg-allyoung-600 shadow-md transition-all">
+            儲存題目
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+
+  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+  <script>
+    /* DEFAULT SOP QUESTION BANK */
+    const DEFAULT_QUESTIONS = [
+      {
+        id: "q_1",
+        category: "出貨",
+        channel: "屈臣氏",
+        text: "關於屈臣氏 (Watsons) 實體出貨的「允收效期」規定，下列何者正確？",
+        options: [
+          "商品效期須大於 1 年",
+          "商品效期須大於 1.5 年",
+          "商品效期須大於 2 年",
+          "無效期限制，只要未過期即可"
+        ],
+        answer: 2,
+        explanation: "根據屈臣氏 SOP 規定：屈臣氏出貨之商品允收效期必須 > 2年。"
+      },
+      {
+        id: "q_2",
+        category: "出貨",
+        channel: "屈臣氏",
+        text: "屈臣氏打板出貨時，標準棧板規格與規格要求為下列何者？",
+        options: [
+          "110*110 cm 塑膠棧板",
+          "100*120 cm 四向進叉木質棧板",
+          "80*120 cm 歐規塑膠棧板",
+          "100*100 cm 雙向進叉紙棧板"
+        ],
+        answer: 1,
+        explanation: "屈臣氏 SOP 規範：棧板規格為 100*120 cm，需為四向進叉木質棧板。"
+      },
+      {
+        id: "q_3",
+        category: "出貨",
+        channel: "屈臣氏",
+        text: "屈臣氏出貨黏貼 A5 麥頭時，正確的張貼位置為何？",
+        options: [
+          "外箱正中央",
+          "外箱側邊右上角",
+          "外箱側邊左上角",
+          "外箱頂部封箱膠帶上"
+        ],
+        answer: 2,
+        explanation: "屈臣氏麥頭貼標規範：A5 麥頭需貼於箱側「左上角」。"
+      },
+      {
+        id: "q_4",
+        category: "出貨",
+        channel: "屈臣氏",
+        text: "當屈臣氏同張訂單同商品出現多種批號時，作業規範為何？",
+        options: [
+          "每箱均可隨意混裝不同批號",
+          "僅能有 1 種批號尾數箱，且雙批號箱須以紅蠟筆顯著標記",
+          "僅能有 2 種批號尾數箱，並用黑筆塗黑",
+          "完全不可有雙批號情況發生，直接退單"
+        ],
+        answer: 1,
+        explanation: "屈臣氏批號控制規範：同張訂單同商品僅能有 1 種批號尾數箱；若有雙批號箱，須用「紅蠟筆」顯著標記。"
+      },
+      {
+        id: "q_5",
+        category: "出貨",
+        channel: "屈臣氏",
+        text: "配合大榮貨運運送屈臣氏貨件時，達到多少件數時必須打成棧板？",
+        options: [
+          "滿 10 大件",
+          "滿 15 大件",
+          "滿 20 大件",
+          "滿 30 大件"
+        ],
+        answer: 2,
+        explanation: "屈臣氏物流打板規範：大榮貨運滿 20 大件即需打成板出貨。"
+      },
+      {
+        id: "q_6",
+        category: "出貨",
+        channel: "康是美",
+        text: "關於康是美 (Cosmed) 出貨單據黏貼與附夾規範，下列敘述何者正確？",
+        options: [
+          "箱內用 6 號袋，箱外用 8 號袋",
+          "箱內以 8 號袋 2 折放入歐漾銷貨單+康是美訂單；箱外以 6 號袋 4 折放入康是美訂單",
+          "箱外可隨意貼上其他促銷或物流備註標籤",
+          "箱內外均不需放入訂單，僅貼麥頭即可"
+        ],
+        answer: 1,
+        explanation: "康是美 SOP 規範：箱內用 8號袋2折 (歐漾銷貨單+康是美訂單)；箱外用 6號袋4折 (康是美訂單)，且箱外絕對不能有任何其他標籤。"
+      },
+      {
+        id: "q_7",
+        category: "出貨",
+        channel: "康是美",
+        text: "新竹貨運運送康是美貨件時，滿幾件需成板出貨？",
+        options: [
+          "滿 10 大件",
+          "滿 15 大件",
+          "滿 20 大件",
+          "滿 25 大件"
+        ],
+        answer: 1,
+        explanation: "康是美 SOP 規範：新竹貨運滿 15 大件即需成板出貨。"
+      },
+      {
+        id: "q_8",
+        category: "出貨",
+        channel: "寶雅",
+        text: "寶雅 (Poya) 出貨時，關於訂單圈示與補出貨註記，何者正確？",
+        options: [
+          "箱內外訂單均需以藍色原子筆圈畫",
+          "箱內外各一張訂單均需用紅蠟筆標示；缺貨填 0 備註「分批出貨」，補出貨寫「本次出貨」",
+          "寶雅嚴格禁止提前到倉",
+          "缺貨時直接刪除該筆品項，不需做任何註記"
+        ],
+        answer: 1,
+        explanation: "寶雅 SOP 規範：允許可提前到倉；箱內外各一張訂單用紅蠟筆標示，缺貨寫 0 與「分批出貨」，補出貨寫「本次出貨」。"
+      },
+      {
+        id: "q_9",
+        category: "出貨",
+        channel: "百貨",
+        text: "百貨門市出貨作業流程中，下列處置何者符合 SOP？",
+        options: [
+          "持「歐漾借出單」對點，託運單拍照上傳實體群組，棧板優先用塑膠板/甘蔗板",
+          "持「寶雅銷貨單」對點，棧板優先用木板",
+          "不需開立託運單，直接由快遞帶走",
+          "託運單開立後僅需存檔，不可傳至實體群組"
+        ],
+        answer: 0,
+        explanation: "百貨門市 SOP：持「歐漾借出單」對點，託運單拍照上傳至實體群組，打板優先使用塑膠板或甘蔗板。"
+      },
+      {
+        id: "q_10",
+        category: "出貨",
+        channel: "零零特賣",
+        text: "零零特賣出貨時，商品效期與品質品項優先選擇為何？",
+        options: [
+          "優先出最少 3 年以上之全新正貨",
+          "優先出即期品 (撤場+2個月) 與重整品",
+          "優先出報廢品與不良品",
+          "無任何效期順序限制"
+        ],
+        answer: 1,
+        explanation: "零零特賣 SOP：優先出貨即期品 (撤場+2個月) 與重整品，持借出單對點並上傳託運單至實體群組。"
+      },
+      {
+        id: "q_11",
+        category: "出貨",
+        channel: "家樂福電商",
+        text: "家樂福電商出貨作業中，銷貨單號格式與託運規範為何？",
+        options: [
+          "銷貨單號為 2323-XXXXXXXXXX 印 2 張，需秤重(含包材)並印黑貓託運單上傳群組",
+          "銷貨單號為 1000-XXXXXXXXXX 印 1 張，使用新竹貨運",
+          "包裝後不需秤重，直接貼標出貨",
+          "銷貨單號印 3 張，貼於箱外"
+        ],
+        answer: 0,
+        explanation: "家樂福電商 SOP：銷貨單號格式 2323-XXXXXXXXXX 列印 2 張，包裝完畢必須秤重 (含包材) 並列印黑貓託運單拍照上傳群組。"
+      },
+      {
+        id: "q_12",
+        category: "出貨",
+        channel: "氣氛物與試用品",
+        text: "關於門市氣氛物與試用品出貨外箱標示，下列何者正確？",
+        options: [
+          "試用品貼仿單轉品號，箱外顯著標示「薇佳氣氛物/試用品」",
+          "不需貼仿單，外箱保持空白",
+          "外箱標示「正品出貨」即可",
+          "試用品可與常規商品混合裝箱不需標註"
+        ],
+        answer: 0,
+        explanation: "氣氛物/試用品 SOP：試用品需貼仿單轉品號，外箱顯著黏貼或標示「薇佳氣氛物/試用品」。"
+      },
+      {
+        id: "q_13",
+        category: "退貨",
+        channel: "寶雅/康是美",
+        text: "寶雅與康是美在系統進行退貨「暫退倉」處理時，其倉庫代碼分別為何？",
+        options: [
+          "寶雅 W6001 / 康是美 W6003",
+          "寶雅 W6002 / 康是美 W6004",
+          "寶雅 W6004 / 康是美 W6002",
+          "寶雅 W9000 / 康是美 W9001"
+        ],
+        answer: 1,
+        explanation: "退貨 SOP 規範：寶雅暫退倉代碼為「W6002」，康是美暫退倉代碼為「W6004」，登打轉播單列印對點後送出。"
+      },
+      {
+        id: "q_14",
+        category: "退貨",
+        channel: "屈臣氏/零零/百貨/小三美日",
+        text: "收到屈臣氏、零零、百貨或小三美日之退貨件時，物流實體入庫對點憑證為何？",
+        options: [
+          "請業務開立「歐漾歸還單」進行對點入庫",
+          "直接憑口頭確認入庫",
+          "自行塗改原本的出貨銷貨單",
+          "開立寶雅轉播單對點"
+        ],
+        answer: 0,
+        explanation: "退貨 SOP 規範：點收件數與託運單一致後，交由業務開立「歐漾歸還單」進行實體對點入庫。"
+      },
+      {
+        id: "q_15",
+        category: "綜合",
+        channel: "所有通路",
+        text: "關於康是美出貨「絕對不可以」發生的狀況，下列何者為嚴格禁忌？",
+        options: [
+          "提前 1 天包裝完成",
+          "往回出貨",
+          "使用新竹貨運",
+          "使用 8 號袋"
+        ],
+        answer: 1,
+        explanation: "康是美 SOP 核心原則：康是美出貨「絕對不可往回出貨」。"
+      }
+    ];
+
+    /* APP STATE */
+    let questions = [];
+    let currentQuizQuestions = [];
+    let currentQuestionIndex = 0;
+    let quizScore = 0;
+    let quizAnswers = []; // { qId, selectedOpt, isCorrect }
+    let quizMode = 'instant'; // 'instant' | 'exam'
+    let examTimerInterval = null;
+    let examTimeLeft = 900; // 15 mins
+
+    let testHistory = [];
+    let wrongQuestionIds = new Set();
+
+    /* INITIALIZATION */
+    window.onload = function() {
+      loadLocalStorageData();
+      updateAvailableQuizCount();
+      renderAdminQuestions();
+      renderAnalytics();
+    };
+
+    /* LOCAL STORAGE STORAGE MANAGEMENT */
+    function loadLocalStorageData() {
+      const storedQ = localStorage.getItem('allyoung_sop_questions');
+      if (storedQ) {
+        try {
+          questions = JSON.parse(storedQ);
+        } catch (e) {
+          questions = [...DEFAULT_QUESTIONS];
+        }
+      } else {
+        questions = [...DEFAULT_QUESTIONS];
+        saveQuestionsToStorage();
+      }
+
+      const storedHistory = localStorage.getItem('allyoung_sop_history');
+      if (storedHistory) {
+        try { testHistory = JSON.parse(storedHistory); } catch (e) { testHistory = []; }
+      }
+
+      const storedWrong = localStorage.getItem('allyoung_sop_wrong');
+      if (storedWrong) {
+        try { wrongQuestionIds = new Set(JSON.parse(storedWrong)); } catch (e) { wrongQuestionIds = new Set(); }
+      }
+    }
+
+    function saveQuestionsToStorage() {
+      localStorage.setItem('allyoung_sop_questions', JSON.stringify(questions));
+    }
+
+    function saveHistoryToStorage() {
+      localStorage.setItem('allyoung_sop_history', JSON.stringify(testHistory));
+    }
+
+    function saveWrongToStorage() {
+      localStorage.setItem('allyoung_sop_wrong', JSON.stringify(Array.from(wrongQuestionIds)));
+    }
+
+    /* NAVIGATION SWITCHING */
+    function switchTab(tabName) {
+      const tabs = ['quiz', 'sop', 'analytics', 'admin'];
+      tabs.forEach(t => {
+        document.getElementById(`tab-${t}`).classList.add('hidden');
+        const btn = document.getElementById(`nav-${t}`);
+        if (btn) {
+          btn.className = "nav-btn flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 whitespace-nowrap text-gray-600 hover:text-allyoung-600";
+        }
+      });
+
+      document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`nav-${tabName}`);
+      if (activeBtn) {
+        activeBtn.className = "nav-btn flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 whitespace-nowrap bg-white text-allyoung-600 shadow-sm font-semibold";
+      }
+
+      if (tabName === 'quiz') updateAvailableQuizCount();
+      if (tabName === 'admin') renderAdminQuestions();
+      if (tabName === 'analytics') renderAnalytics();
+    }
+
+    /* FILTER & COUNT UPDATE */
+    document.getElementById('quiz-filter-cat').addEventListener('change', updateAvailableQuizCount);
+    document.getElementById('quiz-filter-channel').addEventListener('change', updateAvailableQuizCount);
+
+    function getFilteredQuestions() {
+      const cat = document.getElementById('quiz-filter-cat').value;
+      const channel = document.getElementById('quiz-filter-channel').value;
+
+      return questions.filter(q => {
+        const catMatch = (cat === 'ALL') || (q.category === cat);
+        const channelMatch = (channel === 'ALL') || (q.channel.includes(channel) || channel.includes(q.channel));
+        return catMatch && channelMatch;
+      });
+    }
+
+    function updateAvailableQuizCount() {
+      const filtered = getFilteredQuestions();
+      document.getElementById('quiz-available-count').innerText = `符合條件之題目數：${filtered.length} 題`;
+    }
+
+    /* ==================== QUIZ ENGINE ==================== */
+    function startQuiz() {
+      const pool = getFilteredQuestions();
+      if (pool.length === 0) {
+        alert('目前篩選條件下沒有可練習的題目，請調整類別或通路！');
+        return;
+      }
+
+      // Shuffle pool
+      currentQuizQuestions = [...pool].sort(() => Math.random() - 0.5);
+      currentQuestionIndex = 0;
+      quizScore = 0;
+      quizAnswers = [];
+      quizMode = document.getElementById('quiz-filter-mode').value;
+
+      // UI Reset
+      document.getElementById('quiz-setup-panel').classList.add('hidden');
+      document.getElementById('quiz-result-panel').classList.add('hidden');
+      document.getElementById('quiz-active-container').classList.remove('hidden');
+
+      document.getElementById('quiz-mode-badge').innerText = (quizMode === 'instant') ? '即時解說模式' : '模擬考試模式';
+
+      // Timer
+      if (quizMode === 'exam') {
+        document.getElementById('quiz-timer-box').classList.remove('hidden');
+        examTimeLeft = Math.min(pool.length * 60, 900); // 1 min per q, max 15 mins
+        updateTimerDisplay();
+        clearInterval(examTimerInterval);
+        examTimerInterval = setInterval(() => {
+          examTimeLeft--;
+          updateTimerDisplay();
+          if (examTimeLeft <= 0) {
+            clearInterval(examTimerInterval);
+            alert('考試時間到！系統將自動結算成績。');
+            finishQuiz();
+          }
+        }, 1000);
+      } else {
+        document.getElementById('quiz-timer-box').classList.add('hidden');
+      }
+
+      renderCurrentQuestion();
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(examTimeLeft / 60);
+      const secs = examTimeLeft % 60;
+      document.getElementById('quiz-timer').innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function renderCurrentQuestion() {
+      const q = currentQuizQuestions[currentQuestionIndex];
+      const total = currentQuizQuestions.length;
+
+      // Update progress
+      document.getElementById('quiz-progress-text').innerText = `第 ${currentQuestionIndex + 1} / ${total} 題`;
+      const progressPercent = ((currentQuestionIndex + 1) / total) * 100;
+      document.getElementById('quiz-progress-bar').style.width = `${progressPercent}%`;
+
+      // Tags & Text
+      document.getElementById('q-category-tag').innerText = q.category;
+      document.getElementById('q-channel-tag').innerText = q.channel;
+      document.getElementById('q-text').innerText = q.text;
+
+      // Hide explanation
+      const expBox = document.getElementById('q-explanation-box');
+      expBox.classList.add('hidden');
+
+      // Next button state
+      const nextBtn = document.getElementById('btn-next-q');
+      nextBtn.disabled = true;
+      nextBtn.innerText = (currentQuestionIndex === total - 1) ? '完成測驗' : '下一題';
+
+      // Render Options
+      const optionsContainer = document.getElementById('q-options');
+      optionsContainer.innerHTML = '';
+
+      const labels = ['A', 'B', 'C', 'D'];
+      q.options.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = `option-btn w-full text-left p-4 rounded-2xl border border-gray-200 bg-gray-50/50 hover:bg-allyoung-50 hover:border-allyoung-300 transition-all flex items-center justify-between text-xs sm:text-sm font-medium text-gray-700`;
+        btn.onclick = () => selectOption(idx);
+        btn.id = `opt-btn-${idx}`;
+
+        btn.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="w-7 h-7 rounded-xl bg-white border border-gray-300 flex items-center justify-center font-bold text-gray-500 shadow-sm text-xs group-hover:border-allyoung-400 group-hover:text-allyoung-600">
+              ${labels[idx]}
+            </span>
+            <span>${optText}</span>
+          </div>
+          <i class="fa-regular fa-circle text-gray-300 text-base status-icon"></i>
+        `;
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function selectOption(selectedIdx) {
+      const q = currentQuizQuestions[currentQuestionIndex];
+      const isCorrect = (selectedIdx === q.answer);
+
+      // Disable option buttons
+      const optBtns = document.querySelectorAll('.option-btn');
+      optBtns.forEach(b => b.disabled = true);
+
+      // Save answer state
+      quizAnswers[currentQuestionIndex] = {
+        qId: q.id,
+        question: q,
+        selectedOpt: selectedIdx,
+        isCorrect: isCorrect
+      };
+
+      if (isCorrect) {
+        quizScore += 1;
+        wrongQuestionIds.delete(q.id);
+      } else {
+        wrongQuestionIds.add(q.id);
+      }
+      saveWrongToStorage();
+
+      // Style selected option & correct option
+      optBtns.forEach((btn, idx) => {
+        if (idx === q.answer) {
+          btn.className = "option-btn w-full text-left p-4 rounded-2xl border-2 border-green-500 bg-green-50 text-green-800 font-bold flex items-center justify-between text-xs sm:text-sm";
+          btn.querySelector('.status-icon').className = "fa-solid fa-circle-check text-green-600 text-base";
+        } else if (idx === selectedIdx && !isCorrect) {
+          btn.className = "option-btn w-full text-left p-4 rounded-2xl border-2 border-red-400 bg-red-50 text-red-800 font-bold flex items-center justify-between text-xs sm:text-sm";
+          btn.querySelector('.status-icon').className = "fa-solid fa-circle-xmark text-red-500 text-base";
+        } else {
+          btn.className = "option-btn w-full text-left p-4 rounded-2xl border border-gray-200 bg-gray-50/30 opacity-60 text-gray-400 flex items-center justify-between text-xs sm:text-sm";
+        }
+      });
+
+      // Show Instant Explanation if instant mode
+      if (quizMode === 'instant') {
+        const expBox = document.getElementById('q-explanation-box');
+        const resTitle = document.getElementById('q-result-title');
+        const resText = document.getElementById('q-explanation-text');
+
+        expBox.classList.remove('hidden');
+        if (isCorrect) {
+          expBox.className = "rounded-2xl p-4 md:p-5 text-xs sm:text-sm bg-green-50 border border-green-200 text-green-900";
+          resTitle.innerHTML = `<i class="fa-solid fa-circle-check text-green-600"></i> 回答正確！`;
+        } else {
+          expBox.className = "rounded-2xl p-4 md:p-5 text-xs sm:text-sm bg-red-50 border border-red-200 text-red-900";
+          resTitle.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-red-500"></i> 回答錯誤！`;
+        }
+        resText.innerText = q.explanation;
+      }
+
+      // Enable Next Button
+      document.getElementById('btn-next-q').disabled = false;
+    }
+
+    function nextQuestion() {
+      if (currentQuestionIndex < currentQuizQuestions.length - 1) {
+        currentQuestionIndex++;
+        renderCurrentQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function abortQuiz() {
+      if (confirm('確定要退出本次測驗嗎？進行中的紀錄將不會儲存。')) {
+        clearInterval(examTimerInterval);
+        document.getElementById('quiz-active-container').classList.add('hidden');
+        document.getElementById('quiz-setup-panel').classList.remove('hidden');
+      }
+    }
+
+    function finishQuiz() {
+      clearInterval(examTimerInterval);
+      document.getElementById('quiz-active-container').classList.add('hidden');
+      document.getElementById('quiz-result-panel').classList.remove('hidden');
+
+      const total = currentQuizQuestions.length;
+      const accuracy = Math.round((quizScore / total) * 100);
+      const scorePoints = Math.round((quizScore / total) * 100);
+
+      document.getElementById('res-score').innerText = scorePoints;
+      document.getElementById('res-correct-wrong').innerText = `${quizScore} / ${total - quizScore}`;
+      document.getElementById('res-accuracy').innerText = `${accuracy}%`;
+
+      // Log Test Record
+      const record = {
+        date: new Date().toLocaleString('zh-TW', { hour12: false }),
+        category: document.getElementById('quiz-filter-cat').value,
+        channel: document.getElementById('quiz-filter-channel').value,
+        mode: quizMode === 'instant' ? '即時練習' : '模擬考試',
+        score: scorePoints,
+        accuracy: accuracy
+      };
+      testHistory.unshift(record);
+      saveHistoryToStorage();
+
+      // Render Wrong Details in Result Panel
+      const wrongList = document.getElementById('res-wrong-list');
+      wrongList.innerHTML = '';
+
+      const wrongAnswers = quizAnswers.filter(a => a && !a.isCorrect);
+      if (wrongAnswers.length === 0) {
+        wrongList.innerHTML = `<div class="p-4 bg-green-50 text-green-700 rounded-xl text-xs font-bold text-center"><i class="fa-solid fa-star mr-1"></i> 太棒了！本次測驗完全正確，沒有錯題！</div>`;
+      } else {
+        wrongAnswers.forEach((item, i) => {
+          const q = item.question;
+          const labels = ['A', 'B', 'C', 'D'];
+          const div = document.createElement('div');
+          div.className = "p-4 bg-red-50/60 border border-red-100 rounded-2xl text-xs space-y-2";
+          div.innerHTML = `
+            <div class="font-bold text-gray-800">錯題 ${i + 1}: ${q.text}</div>
+            <div class="text-red-600 font-medium">您的回答：${labels[item.selectedOpt]} - ${q.options[item.selectedOpt]}</div>
+            <div class="text-green-700 font-bold">正確答案：${labels[q.answer]} - ${q.options[q.answer]}</div>
+            <div class="text-gray-600 bg-white p-2 rounded-lg border border-red-100 mt-1"><strong>SOP解析：</strong>${q.explanation}</div>
+          `;
+          wrongList.appendChild(div);
+        });
+      }
+    }
+
+
+    /* ==================== SOP ACCORDION SEARCH ==================== */
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const icon = btn.querySelector('.fa-chevron-down');
+      content.classList.toggle('hidden');
+      if (icon) {
+        icon.classList.toggle('rotate-180');
+      }
+    }
+
+    function filterSopAccordion() {
+      const query = document.getElementById('sop-search-input').value.toLowerCase();
+      const cards = document.querySelectorAll('#sop-accordion-container .sop-card');
+
+      cards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        if (text.includes(query)) {
+          card.classList.remove('hidden');
+          if (query.trim() !== '') {
+            card.querySelector('div.p-4').classList.remove('hidden');
+          }
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    }
+
+
+    /* ==================== ANALYTICS & MISTAKES ==================== */
+    function renderAnalytics() {
+      // Summary Stats
+      document.getElementById('stat-total-tests').innerText = testHistory.length;
+      
+      if (testHistory.length > 0) {
+        const sumAcc = testHistory.reduce((acc, curr) => acc + curr.accuracy, 0);
+        const avgAcc = Math.round(sumAcc / testHistory.length);
+        document.getElementById('stat-avg-accuracy').innerText = `${avgAcc}%`;
+      } else {
+        document.getElementById('stat-avg-accuracy').innerText = `0%`;
+      }
+
+      document.getElementById('stat-wrong-count').innerText = wrongQuestionIds.size;
+
+      // Render Wrong Questions Notebook
+      const mistakesContainer = document.getElementById('mistakes-container');
+      mistakesContainer.innerHTML = '';
+
+      if (wrongQuestionIds.size === 0) {
+        mistakesContainer.innerHTML = `<div class="p-6 text-center text-gray-400 text-xs bg-gray-50 rounded-2xl">目前沒有累積錯題！持續保持精準作業！</div>`;
+      } else {
+        const wrongList = questions.filter(q => wrongQuestionIds.has(q.id));
+        wrongList.forEach(q => {
+          const div = document.createElement('div');
+          div.className = "p-4 bg-white border border-allyoung-100 rounded-2xl shadow-sm text-xs space-y-2 hover:border-allyoung-300 transition-all";
+          div.innerHTML = `
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded-full bg-allyoung-100 text-allyoung-700 font-bold text-[10px]">${q.category}</span>
+                <span class="px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 font-bold text-[10px]">${q.channel}</span>
+              </div>
+              <button onclick="removeSingleMistake('${q.id}')" class="text-gray-400 hover:text-red-500 text-xs" title="移除錯題">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+            <div class="font-bold text-gray-800 text-sm">${q.text}</div>
+            <div class="text-green-700 font-medium">正確答案：${q.options[q.answer]}</div>
+            <div class="bg-allyoung-50/50 p-2.5 rounded-xl text-gray-600 border border-allyoung-100">
+              <strong>SOP 解析：</strong>${q.explanation}
+            </div>
+          `;
+          mistakesContainer.appendChild(div);
+        });
+      }
+
+      // Render History Table
+      const historyTable = document.getElementById('history-table-body');
+      historyTable.innerHTML = '';
+
+      if (testHistory.length === 0) {
+        historyTable.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-gray-400">尚無測驗歷史紀錄</td></tr>`;
+      } else {
+        testHistory.slice(0, 10).forEach(h => {
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-gray-50/50 transition-colors";
+          tr.innerHTML = `
+            <td class="py-3 font-medium text-gray-500">${h.date}</td>
+            <td class="py-3"><span class="font-bold text-gray-700">${h.category}</span> (${h.channel})</td>
+            <td class="py-3"><span class="px-2 py-0.5 rounded bg-gray-100 text-gray-600 text-[11px] font-semibold">${h.mode}</span></td>
+            <td class="py-3 font-bold text-allyoung-600">${h.score} 分</td>
+            <td class="py-3 font-bold ${h.accuracy >= 80 ? 'text-green-600' : 'text-amber-600'}">${h.accuracy}%</td>
+          `;
+          historyTable.appendChild(tr);
+        });
+      }
+    }
+
+    function removeSingleMistake(qId) {
+      wrongQuestionIds.delete(qId);
+      saveWrongToStorage();
+      renderAnalytics();
+    }
+
+    function clearMistakes() {
+      if (confirm('確定要清空所有的錯題紀錄嗎？')) {
+        wrongQuestionIds.clear();
+        saveWrongToStorage();
+        renderAnalytics();
+      }
+    }
+
+
+    /* ==================== QUESTION MANAGER (ADMIN) ==================== */
+    function renderAdminQuestions() {
+      document.getElementById('admin-total-count').innerText = `共 ${questions.length} 題`;
+      const listContainer = document.getElementById('admin-questions-list');
+      listContainer.innerHTML = '';
+
+      questions.forEach((q, index) => {
+        const card = document.createElement('div');
+        card.className = "p-4 bg-gray-50 hover:bg-white border border-gray-200 hover:border-allyoung-300 rounded-2xl transition-all shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs md:text-sm";
+        card.innerHTML = `
+          <div class="space-y-1 flex-grow">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-allyoung-600">#${index + 1}</span>
+              <span class="px-2 py-0.5 rounded bg-purple-100 text-purple-700 font-bold text-[10px]">${q.category}</span>
+              <span class="px-2 py-0.5 rounded bg-pink-100 text-pink-700 font-bold text-[10px]">${q.channel}</span>
+            </div>
+            <div class="font-bold text-gray-800">${q.text}</div>
+            <div class="text-gray-500 text-xs">正確答案：${q.options[q.answer]}</div>
+          </div>
+
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="editQuestion('${q.id}')" class="px-3 py-1.5 rounded-lg bg-allyoung-100 text-allyoung-700 font-bold hover:bg-allyoung-200 transition-all text-xs">
+              <i class="fa-solid fa-pen"></i> 編輯
+            </button>
+            <button onclick="deleteQuestion('${q.id}')" class="px-3 py-1.5 rounded-lg bg-red-100 text-red-600 font-bold hover:bg-red-200 transition-all text-xs">
+              <i class="fa-solid fa-trash"></i> 刪除
+            </button>
+          </div>
+        `;
+        listContainer.appendChild(card);
+      });
+    }
+
+    function openQuestionModal(editQ = null) {
+      document.getElementById('question-modal').classList.remove('hidden');
+      const form = document.getElementById('question-form');
+      form.reset();
+
+      if (editQ) {
+        document.getElementById('modal-title').innerText = "編輯 SOP 題目";
+        document.getElementById('edit-q-id').value = editQ.id;
+        document.getElementById('form-q-category').value = editQ.category;
+        document.getElementById('form-q-channel').value = editQ.channel;
+        document.getElementById('form-q-text').value = editQ.text;
+        
+        editQ.options.forEach((opt, i) => {
+          document.getElementById(`form-opt-${i}`).value = opt;
+        });
+
+        document.getElementById(`opt-radio-${editQ.answer}`).checked = true;
+        document.getElementById('form-q-explanation').value = editQ.explanation;
+      } else {
+        document.getElementById('modal-title').innerText = "新增 SOP 題目";
+        document.getElementById('edit-q-id').value = "";
+      }
+    }
+
+    function closeQuestionModal() {
+      document.getElementById('question-modal').classList.add('hidden');
+    }
+
+    function saveQuestionForm(e) {
+      e.preventDefault();
+      const id = document.getElementById('edit-q-id').value || `q_${Date.now()}`;
+      const category = document.getElementById('form-q-category').value;
+      const channel = document.getElementById('form-q-channel').value;
+      const text = document.getElementById('form-q-text').value;
+
+      const options = [
+        document.getElementById('form-opt-0').value,
+        document.getElementById('form-opt-1').value,
+        document.getElementById('form-opt-2').value,
+        document.getElementById('form-opt-3').value
+      ];
+
+      const answer = parseInt(document.querySelector('input[name="correct-opt"]:checked').value);
+      const explanation = document.getElementById('form-q-explanation').value;
+
+      const newQ = { id, category, channel, text, options, answer, explanation };
+
+      const existingIndex = questions.findIndex(q => q.id === id);
+      if (existingIndex >= 0) {
+        questions[existingIndex] = newQ;
+      } else {
+        questions.unshift(newQ);
+      }
+
+      saveQuestionsToStorage();
+      closeQuestionModal();
+      renderAdminQuestions();
+      updateAvailableQuizCount();
+    }
+
+    function editQuestion(qId) {
+      const target = questions.find(q => q.id === qId);
+      if (target) {
+        openQuestionModal(target);
+      }
+    }
+
+    function deleteQuestion(qId) {
+      if (confirm('確定要刪除這道題目嗎？')) {
+        questions = questions.filter(q => q.id !== qId);
+        saveQuestionsToStorage();
+        renderAdminQuestions();
+        updateAvailableQuizCount();
+      }
+    }
+
+    /* BACKUP EXPORT & IMPORT */
+    function exportQuestionsJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(questions, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `Allyoung_SOP_Questions_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function importQuestionsJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (Array.isArray(imported) && imported.length > 0) {
+            questions = imported;
+            saveQuestionsToStorage();
+            renderAdminQuestions();
+            updateAvailableQuizCount();
+            alert(`成功匯入 ${imported.length} 道題目！`);
+          } else {
+            alert('匯入失敗：JSON 格式不符或沒有題目資料。');
+          }
+        } catch (err) {
+          alert('讀取檔案失敗，請確定上傳格式正確的 JSON 檔案。');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function resetDefaultQuestions() {
+      if (confirm('確定要恢復為系統預設題庫嗎？這將覆蓋您目前的所有修改。')) {
+        questions = [...DEFAULT_QUESTIONS];
+        saveQuestionsToStorage();
+        renderAdminQuestions();
+        updateAvailableQuizCount();
+        alert('題庫已恢復為預設 SOP 狀態。');
+      }
+    }
+  </script>
+
+</body>
+</html>
